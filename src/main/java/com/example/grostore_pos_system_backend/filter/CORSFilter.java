@@ -15,9 +15,6 @@ public class CORSFilter extends HttpFilter {
         var origin = req.getHeader("Origin");
         var configOrigin = getServletContext().getInitParameter("origin");
 
-        System.out.println("ori " + origin);
-        System.out.println("oriConf " + configOrigin);
-
         if (origin != null &&origin.contains(configOrigin)){
             res.setHeader("Access-Control-Allow-Origin",origin);
             res.setHeader("Access-Control-Allow-Methods","GET,POST,PUT,DELETE,OPTION,PATCH");
