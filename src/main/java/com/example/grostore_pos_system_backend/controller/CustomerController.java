@@ -1,5 +1,7 @@
 package com.example.grostore_pos_system_backend.controller;
 
+import com.example.grostore_pos_system_backend.bo.BOFactory;
+import com.example.grostore_pos_system_backend.bo.custom.CustomerBO;
 import com.example.grostore_pos_system_backend.dto.CustomerDTO;
 import com.example.grostore_pos_system_backend.persistent.customerImpl.CustomerDataProcess;
 import jakarta.json.bind.Jsonb;
@@ -22,6 +24,8 @@ public class CustomerController extends HttpServlet {
 
     private Connection connection;
     CustomerDataProcess customerDataProcess = new CustomerDataProcess();
+
+    CustomerBO customerBO = (CustomerBO) BOFactory.getBOFactory().BOTypes(BOFactory.BOTypes.CUSTOMER);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,16 +51,16 @@ public class CustomerController extends HttpServlet {
 
         Jsonb jsonb = JsonbBuilder.create();
         CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
-        System.out.println("cusDTO " + customerDTO);
 
         try(var writer = resp.getWriter()){
-           boolean isSaved = customerDataProcess.saveCustomer(customerDTO , connection);
+//           boolean isSaved = customerDataProcess.saveCustomer(customerDTO , connection);
+            boolean isSaved = customerBO.saveCustomer(customerDTO,connection);
            if (isSaved){
                writer.write("successfully");
            }else {
                writer.write("Try Again");
            }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
