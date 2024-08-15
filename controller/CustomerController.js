@@ -8,12 +8,17 @@ let checkName = false;
 let checkCity = false;
 let checkTel = false;
 
-let cId = $('#inputCustomerIdU').val()
-let cName = $('#inputCustomerNameU').val()
-let cCity = $('#inputCityU').val()
-let cTel = $('#inputTelephoneU').val()
+let cId = $('#inputCustomerIdU').val();
+let cName = $('#inputCustomerNameU').val();
+let cCity = $('#inputCityU').val();
+let cTel = $('#inputTelephoneU').val();
+
+window.onload = loadTable();
 
 $('#submitC').on('click' , ()=>{
+    console.log("click cus");
+    
+    event.preventDefault();
 
     $('#submitC').prop('disabled' , true);
 
@@ -27,20 +32,54 @@ $('#submitC').on('click' , ()=>{
     let city = $('#inputCityC').val();
     let tel = $('#inputTelephoneC').val();
 
-    let customerDetail = new Customer(cId,cName,city,tel)
-    customer.push(customerDetail)
-    loadTable()
+    const CustomerDTO = {
+        id : cId,
+        name : cName,
+        city : city,
+        tel : tel
+    }
 
-    $('#selectCustomerId').append($('<option>').text(cId)); // place order customer id comboBox set customer code
+    console.log(CustomerDTO);
+
+    const customerDTOJson = JSON.stringify(CustomerDTO);
+    console.log(customerDTOJson);
+
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                console.log(jsonTypeResp);
+                
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open("POST","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
+    http.setRequestHeader("Content-Type","application/json");
+    
+    http.send(customerDTOJson); 
+    loadTable();
+
+    // let customerDetail = new Customer(cId,cName,city,tel)
+    // customer.push(customerDetail);
+
+
+    // $('#selectCustomerId').append($('<option>').text(cId)); // place order customer id comboBox set customer code
 
     $('#customerTable').on('click', 'tr', function () {
 
-        let idC = $(this).find(".c-id").text()
-        let nameC = $(this).find(".c-name").text()
-        let cityC = $(this).find(".c-city").text()
-        let telC = $(this).find(".c-tel").text()
+        let idC = $(this).find(".c-id").text();
+        let nameC = $(this).find(".c-name").text();
+        let cityC = $(this).find(".c-city").text();
+        let telC = $(this).find(".c-tel").text();
 
-        clickTableRow = $(this).index()
+        clickTableRow = $(this).index();
 
         $('#inputCustomerIdU').val(idC);
         $('#inputCustomerNameU').val(nameC);
@@ -49,22 +88,64 @@ $('#submitC').on('click' , ()=>{
 
         $('#inputCustomerId').val(idC);
         $('#inputCustomerName').val(nameC);
-    })
+    });
+
+    // if (customer.length < 10){
+    //     $('#customer').text("0"+ customer.length);
+    // }else {
+    //     $('#customer').text(customer.length);
+    // }
      clearForm()
 })
 
 function loadTable(){
-    $('#customerTable').empty()
-    customer.map(function (customerDetails){
-        let record = `<tr>
-                                  <td class="c-id orderTableBody">${customerDetails.id}</td>  
-                                  <td class="c-name orderTableBody">${customerDetails.name}</td>  
-                                  <td class="c-city orderTableBody">${customerDetails.city}</td>  
-                                  <td class="c-tel orderTableBody">${customerDetails.tel}</td>  
-                             </tr>`
 
-        $('#customerTable').append(record)
-    })
+    const http = new XMLHttpRequest();
+    http.onreadystatechange = () => {
+        // Check state
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                // Parse JSON response
+                const customerDetails = JSON.parse(http.responseText);
+                console.log(customerDetails);
+
+                // Display records on the front end (Assuming you have a table or a div to display these)
+            
+                $('#customerTable').empty();                
+                customerDetails.map(customer => {
+                   let record = `<tr> 
+                                    <td class ="c-id orderTableBody">${customer.id}</td>
+                                    <td class ="c-name orderTableBody">${customer.name}</td>
+                                    <td class ="c-city orderTableBody">${customer.city}</td>
+                                    <td class ="c-tel orderTableBody">${customer.tel}</td>
+                                </tr>`;
+                    $('#customerTable').append(record);
+                });
+
+
+                
+    // customer.map(function (customerDetails){
+    //     let record = `<tr>
+    //                               <td class="c-id orderTableBody">${customerDetails.id}</td>  
+    //                               <td class="c-name orderTableBody">${customerDetails.name}</td>  
+    //                               <td class="c-city orderTableBody">${customerDetails.city}</td>  
+    //                               <td class="c-tel orderTableBody">${customerDetails.tel}</td>  
+    //                          </tr>`
+
+    //     $('#customerTable').append(record)
+    // });
+            } else {
+                console.error("Failed to fetch records");
+                console.error("Status Received", http.status);
+                console.error("Processing Stage", http.readyState);
+            }
+        } else {
+            console.log("Processing stage", http.readyState);
+        }
+    }
+
+    http.open("GET", "http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer", true);
+    http.send();
 }
 
 $('#updateC').on('click' , ()=>{
