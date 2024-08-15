@@ -19,7 +19,18 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public List<Customer> getAll(Connection connection) throws SQLException {
-       return null;
+        ResultSet resultSet = SQLUtil.executeQuery("SELECT * FROM customer",connection);
+        List<Customer> customerList = new ArrayList<>();
+        while (resultSet.next()){
+            Customer customers = new Customer(
+                resultSet.getString(1),
+                resultSet.getString(2),
+                resultSet.getString(3),
+                resultSet.getString(4)
+            );
+            customerList.add(customers);
+        }
+        return customerList;
     }
 
     @Override
