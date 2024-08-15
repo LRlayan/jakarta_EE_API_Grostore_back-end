@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/customer")
 public class CustomerController extends HttpServlet {
@@ -24,7 +25,18 @@ public class CustomerController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        try(var writer = resp.getWriter()){
+            List<CustomerDTO> customerDTOList = customerDataProcess.getAllCustomer(connection);
+            if (customerDTOList != null){
+                resp.setContentType("application/json");
+                Jsonb jsonb = JsonbBuilder.create();
+                jsonb.toJson(customerDTOList,resp.getWriter());
+            }else {
+                writer.write("Not Available");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
