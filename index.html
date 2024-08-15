@@ -12,10 +12,6 @@
     <link rel="stylesheet" href="assets/stylesheet/placeOrderCSSFile.css">
 
     <style>
-        .margin-left-0{
-            margin-left: 0;
-        }
-
         @media all and (min-width: 769px) and (max-width: 1024px){
 
             .tableTitle{
@@ -1022,7 +1018,7 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal">Close</button>
-                            <button id="submitC" class="btn btn-primary saveChanges" type="button">Save Changes</button>
+                            <button id="submitC" class="btn btn-primary saveChanges" type="submit">Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -1469,7 +1465,7 @@
     <div class="row margin fonts">
         <div id="div1" class="card shadow col-md-5 card-container">
             <div>
-                <h2 class="cardText">00</h2>
+                <h2 class="cardText" id="ordersCount">00</h2>
                 <h5 class="cardText">Total Orders</h5>
             </div>
             <div class="back">You can check here<br> the number of orders we<br> have received so far</div>
@@ -1485,7 +1481,7 @@
 
         <div class="card shadow col-md-5 card-container">
             <div id="div3" class="">
-                <h2 class="cardText">00</h2>
+                <h2 class="cardText" id="income">00</h2>
                 <h5 class="cardText">Total Income</h5>
             </div>
             <div class="back">You can check here<br> the income received<br> by our shop so far</div>
