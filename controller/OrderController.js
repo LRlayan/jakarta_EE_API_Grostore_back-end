@@ -20,6 +20,7 @@ var checkSPrice = false;
 var checkSDiscount = false;
 
 var generateOrderId = 1;
+let income = 0;
 
     $('#placeOrder-tab').on('click',()=>{
         checkOrderId = true;
@@ -215,7 +216,18 @@ var generateOrderId = 1;
         $('#itemQty').empty();
         $('#itemPriceListMainDiv').empty();
         $('#orderRemove').empty();
-    })
+
+        if (orders.length < 10){
+            $('#ordersCount').text("0"+ orders.length);
+        }else {
+            $('#ordersCount').text(orders.length);
+        }
+
+        for (let i = 0; i < orders.length; i++) {
+            income += parseFloat(orders[i].price);
+            $('#income').text(income);
+        }
+    });
 
     $('#cancelBtn').on('click',()=>{
         cancel()
@@ -262,7 +274,7 @@ var generateOrderId = 1;
         $('#itemPriceListMainDiv').empty();
     }
 
-    function cancel(){
+function cancel(){
         $('#subTotal').text('0.00');
         $('#discount').text('0.00');
         $('#balance').text('0.00');
