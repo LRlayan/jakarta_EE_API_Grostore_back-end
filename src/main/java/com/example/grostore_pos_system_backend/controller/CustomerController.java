@@ -23,14 +23,12 @@ import java.util.List;
 public class CustomerController extends HttpServlet {
 
     private Connection connection;
-    CustomerDataProcess customerDataProcess = new CustomerDataProcess();
-
     CustomerBO customerBO = (CustomerBO) BOFactory.getBOFactory().BOTypes(BOFactory.BOTypes.CUSTOMER);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try(var writer = resp.getWriter()){
-            List<CustomerDTO> customerDTOList = customerDataProcess.getAllCustomer(connection);
+            List<CustomerDTO> customerDTOList = customerBO.getAllCustomer(connection);
             if (customerDTOList != null){
                 resp.setContentType("application/json");
                 Jsonb jsonb = JsonbBuilder.create();
@@ -67,7 +65,7 @@ public class CustomerController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
+
     }
 
     @Override
