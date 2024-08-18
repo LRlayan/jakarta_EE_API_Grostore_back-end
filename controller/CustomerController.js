@@ -177,13 +177,40 @@ $('#updateC').on('click' , ()=>{
     http.setRequestHeader("Content-Type","application/json");
     http.send(customerDTOJson);
 
-    // loadTable()
+    loadTable()
     clearForm()
     $('#updateC').prop('disabled' , true);
 });
 
 $('#deleteC').on('click',()=>{
-    customer.splice(clickTableRow , 1);
+    // customer.splice(clickTableRow , 1);
+    let cId = $('#inputCustomerId').val();
+
+    let CustomerDTO = {
+        id : cId
+    }
+
+    const customerDTOJson = JSON.stringify(CustomerDTO);
+    console.log("json" + customerDTOJson);
+
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                console.log(jsonTypeResp);
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open("DELETE","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
+    http.setRequestHeader("Content-Type","application/json");
+    http.send(customerDTOJson);
 
     $('#selectCustomerId').empty();
 
