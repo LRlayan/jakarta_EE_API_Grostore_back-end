@@ -23,7 +23,7 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(String id,Connection connection) {
         return false;
     }
 }

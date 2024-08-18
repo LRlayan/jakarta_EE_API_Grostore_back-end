@@ -23,7 +23,7 @@ public class ItemDAOImpl implements ItemDAO {
     }
 
     @Override
-    public boolean delete(String id) {
+    public boolean delete(String id,Connection connection) {
         return false;
     }
 }
