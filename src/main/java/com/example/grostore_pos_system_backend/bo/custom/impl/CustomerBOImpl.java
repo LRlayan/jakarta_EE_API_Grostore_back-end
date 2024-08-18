@@ -37,7 +37,7 @@ public class CustomerBOImpl implements CustomerBO {
     }
 
     @Override
-    public boolean deleteCustomer() {
-        return false;
+    public boolean deleteCustomer(String id,Connection connection) throws SQLException {
+        return customerDAO.delete(id,connection);
     }
 }
