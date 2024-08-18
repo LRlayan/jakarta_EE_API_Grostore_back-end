@@ -62,7 +62,6 @@ $('#submitC').on('click' , ()=>{
     }
     http.open("POST","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
     http.setRequestHeader("Content-Type","application/json");
-    
     http.send(customerDTOJson); 
     loadTable();
 
@@ -71,24 +70,6 @@ $('#submitC').on('click' , ()=>{
 
 
     // $('#selectCustomerId').append($('<option>').text(cId)); // place order customer id comboBox set customer code
-
-    $('#customerTable').on('click', 'tr', function () {
-
-        let idC = $(this).find(".c-id").text();
-        let nameC = $(this).find(".c-name").text();
-        let cityC = $(this).find(".c-city").text();
-        let telC = $(this).find(".c-tel").text();
-
-        clickTableRow = $(this).index();
-
-        $('#inputCustomerIdU').val(idC);
-        $('#inputCustomerNameU').val(nameC);
-        $('#inputCityU').val(cityC);
-        $('#inputTelephoneU').val(telC);
-
-        $('#inputCustomerId').val(idC);
-        $('#inputCustomerName').val(nameC);
-    });
 
     // if (customer.length < 10){
     //     $('#customer').text("0"+ customer.length);
