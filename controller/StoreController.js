@@ -14,6 +14,8 @@ let qty = $('#qty').val()
 let price = $('#priceS').val()
 var orderQTY = 0;
 
+window.onload = loadTable();
+
 $('#submitStore').on('click' , ()=>{
     $('#submitStore').prop('disabled' , true);
     checkCode = false;
@@ -21,48 +23,104 @@ $('#submitStore').on('click' , ()=>{
     checkQTY = false;
     checkPrice = false;
 
-    let itemCode = $('#itemCode').val();
-    let itemName = $('#itemName').val();
-    let QTYOnHand = $('#inputQTY').val();
-    let unitPrice = $('#unitPrice').val();
+    let code = $('#itemCode').val();
+    let name = $('#itemName').val();
+    let qTYOnHand = $('#inputQTY').val();
+    let price = $('#unitPrice').val();
 
-    let storeDetail = new Store(itemCode,itemName,QTYOnHand,unitPrice);
-    store.push(storeDetail);
+    // let storeDetail = new Store(itemCode,itemName,QTYOnHand,unitPrice);
+    // store.push(storeDetail);
+    const ItemDTO = {
+        itemCode : code,
+        itemName : name,
+        QTYOnHand : qTYOnHand,
+        unitPrice : price
+    }
+
+    console.log(ItemDTO);
+
+    const itemDTOJson = JSON.stringify(ItemDTO);
+    console.log(itemDTOJson);
+
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                console.log(jsonTypeResp);
+                
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open("POST","http://localhost:8080/groStore_pos_system_back_end_war_exploded/item",true);
+    http.setRequestHeader("Content-Type","application/json");
+    http.send(itemDTOJson); 
     loadTable();
 
-    $('#selectItemCode').append($('<option>').text(itemCode)); // place order item code comboBox set item code
+    $('#selectItemCode').append($('<option>').text(code)); // place order item code comboBox set item code
 
-    $('#storeTable').on('click', 'tr', function () {
-
-        let code = $(this).find(".s-code").text();
-        let name = $(this).find(".s-name").text();
-        let qty = $(this).find(".s-qty").text();
-        let price = $(this).find(".s-price").text();
-
-        clickTableRow = $(this).index();
-
-        $('#itemCodeS').val(code);
-        $('#itemNameS').val(name);
-        $('#qty').val(qty);
-        $('#priceS').val(price);
-
-        $('#itemCodeR').val(code);
-        $('#itemNameR').val(name);
-    })
     clearForm();
 })
 
+$('#storeTable').on('click', 'tr', function () {
+
+    let code = $(this).find(".s-code").text();
+    let name = $(this).find(".s-name").text();
+    let qty = $(this).find(".s-qty").text();
+    let price = $(this).find(".s-price").text();
+
+    clickTableRow = $(this).index();
+
+    $('#itemCodeS').val(code);
+    $('#itemNameS').val(name);
+    $('#qty').val(qty);
+    $('#priceS').val(price);
+
+    $('#itemCodeR').val(code);
+    $('#itemNameR').val(name);
+});
+
 function loadTable(){
-    $('#storeTable').empty();
-    store.map(function (storeDetails){
-        let record = `<tr>
-                                  <td class="s-code orderTableBody">${storeDetails.itemCode}</td>  
-                                  <td class="s-name orderTableBody">${storeDetails.itemName}</td>  
-                                  <td class="s-qty orderTableBody">${storeDetails.QTYOnHand}</td>  
-                                  <td class="s-price orderTableBody">${storeDetails.unitPrice}</td>  
-                             </tr>`
-        $('#storeTable').append(record);
-    });
+
+    const http = new XMLHttpRequest();
+    http.onreadystatechange = () => {
+        // Check state
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                // Parse JSON response
+                const itemDetails = JSON.parse(http.responseText);
+                console.log(itemDetails);
+
+                // Display records on the front end (Assuming you have a table or a div to display these)
+            
+                $('#storeTable').empty();
+                itemDetails.map(function (storeDetails){
+                    let record = `<tr>
+                                              <td class="s-code orderTableBody">${storeDetails.itemCode}</td>  
+                                              <td class="s-name orderTableBody">${storeDetails.itemName}</td>  
+                                              <td class="s-qty orderTableBody">${storeDetails.QTYOnHand}</td>  
+                                              <td class="s-price orderTableBody">${storeDetails.unitPrice}</td>  
+                                         </tr>`
+                    $('#storeTable').append(record);
+                });
+            } else {
+                console.error("Failed to fetch records");
+                console.error("Status Received", http.status);
+                console.error("Processing Stage", http.readyState);
+            }
+        } else {
+            console.log("Processing stage", http.readyState);
+        }
+    }
+
+    http.open("GET", "http://localhost:8080/groStore_pos_system_back_end_war_exploded/item", true);
+    http.send();
 }
 
 $('#updateS').on('click' , ()=>{
