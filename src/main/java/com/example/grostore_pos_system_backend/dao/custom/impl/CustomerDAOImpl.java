@@ -34,12 +34,11 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public boolean update(Customer dto, Connection connection) throws SQLException {
-        System.out.println(" DAO Update : " + dto.getName() + dto.getCity() + dto.getTel() + dto.getId());
         return SQLUtil.executeQuery("UPDATE customer SET name = ?, city = ?, tel = ? WHERE id = ?",connection,dto.getName(),dto.getCity(),dto.getTel(),dto.getId());
     }
 
     @Override
-    public boolean delete(String id) {
-        return false;
+    public boolean delete(String id,Connection connection) throws SQLException {
+        return SQLUtil.executeQuery("DELETE FROM customer WHERE id = ?",connection,id);
     }
 }
