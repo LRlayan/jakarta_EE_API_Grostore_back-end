@@ -124,17 +124,47 @@ function loadTable(){
 }
 
 $('#updateS').on('click' , ()=>{
+    event.preventDefault();
     let itemCode = $('#itemCodeS').val();
     let itemName = $('#itemNameS').val();
     let QTYOnHand = $('#qty').val();
     let unitPrice = $('#priceS').val();
 
-    let items = store[clickTableRow]
+    // let items = store[clickTableRow]
 
-    items.itemCode = itemCode
-    items.itemName = itemName
-    items.QTYOnHand = QTYOnHand
-    items.unitPrice = unitPrice
+    // items.itemCode = itemCode
+    // items.itemName = itemName
+    // items.QTYOnHand = QTYOnHand
+    // items.unitPrice = unitPrice
+
+    let ItemDTO = {
+        itemCode : itemCode,
+        itemName : itemName,
+        QTYOnHand : QTYOnHand,
+        unitPrice : unitPrice
+    }
+
+    const itemDTOJson = JSON.stringify(ItemDTO);
+    console.log("json" + itemDTOJson);
+
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                console.log(jsonTypeResp);
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open("PUT","http://localhost:8080/groStore_pos_system_back_end_war_exploded/item",true);
+    http.setRequestHeader("Content-Type","application/json");
+    http.send(itemDTOJson);
 
     loadTable();
     clearForm();
@@ -143,13 +173,16 @@ $('#updateS').on('click' , ()=>{
 })
 
 $('#deleteS').on('click',()=>{
-    store.splice(clickTableRow , 1);
+    event.preventDefault();
+    // store.splice(clickTableRow , 1);
 
     $('#selectItemCode').empty();
 
     for (let i = 0; i < store.length; i++) {
         $('#selectItemCode').append($('<option>').text(store[i].itemCode));
     }
+
+    
 
     $('#deleteS').prop('disabled' , true);
     loadTable();
