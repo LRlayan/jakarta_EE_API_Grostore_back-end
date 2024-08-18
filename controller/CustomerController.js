@@ -197,6 +197,24 @@ $('#deleteC').on('click',()=>{
     clearForm()
 });
 
+$('#customerTable').on('click', 'tr', function () {
+
+    let id = $(this).find(".c-id").text();
+    let name = $(this).find(".c-name").text();
+    let city = $(this).find(".c-city").text();
+    let tel = $(this).find(".c-tel").text();
+
+    clickTableRow = $(this).index();
+
+    $('#inputCustomerIdU').val(id);
+    $('#inputCustomerNameU').val(name);
+    $('#inputCityU').val(city);
+    $('#inputTelephoneU').val(tel);
+
+    $('#inputCustomerId').val(id);
+    $('#inputCustomerName').val(name);
+})
+
 $(document).ready(function(){
     $("#inputSearch").on("keyup", function() {
         var value = $(this).val().toLowerCase();
