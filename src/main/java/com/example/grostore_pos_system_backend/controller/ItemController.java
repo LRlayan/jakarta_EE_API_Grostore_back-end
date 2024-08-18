@@ -40,7 +40,23 @@ public class ItemController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        if (!req.getContentType().toLowerCase().contains("application/json") || req.getContentType() == null){
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        Jsonb jsonb = JsonbBuilder.create();
+        ItemDTO itemDTO = jsonb.fromJson(req.getReader(), ItemDTO.class);
+
+        try(var writer = resp.getWriter()){
+            boolean isSaved = itemBO.saveItem(itemDTO,connection);
+            if (isSaved){
+                writer.write("successfully");
+            }else {
+                writer.write("Try Again");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
