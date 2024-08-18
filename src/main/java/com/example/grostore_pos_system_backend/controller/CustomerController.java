@@ -3,7 +3,6 @@ package com.example.grostore_pos_system_backend.controller;
 import com.example.grostore_pos_system_backend.bo.BOFactory;
 import com.example.grostore_pos_system_backend.bo.custom.CustomerBO;
 import com.example.grostore_pos_system_backend.dto.CustomerDTO;
-import com.example.grostore_pos_system_backend.persistent.customerImpl.CustomerDataProcess;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletException;
@@ -65,7 +64,18 @@ public class CustomerController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        CustomerDTO customerDTO = JsonbBuilder.create().fromJson(req.getReader(), CustomerDTO.class);
+        try(var writer = resp.getWriter()){
+            System.out.println("controller " + customerDTO.getId() + customerDTO.getName() + customerDTO.getCity() + customerDTO.getTel());
+            boolean isUpdated = customerBO.updateCustomer(customerDTO,connection);
+            if (isUpdated){
+                writer.write("update successfully");
+            }else {
+                writer.write("Please Try Again.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
