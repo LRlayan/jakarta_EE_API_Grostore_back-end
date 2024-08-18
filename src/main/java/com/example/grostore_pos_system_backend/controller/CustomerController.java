@@ -50,7 +50,6 @@ public class CustomerController extends HttpServlet {
         CustomerDTO customerDTO = jsonb.fromJson(req.getReader(), CustomerDTO.class);
 
         try(var writer = resp.getWriter()){
-//           boolean isSaved = customerDataProcess.saveCustomer(customerDTO , connection);
             boolean isSaved = customerBO.saveCustomer(customerDTO,connection);
            if (isSaved){
                writer.write("successfully");
