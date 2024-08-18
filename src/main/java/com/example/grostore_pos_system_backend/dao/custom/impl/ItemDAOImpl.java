@@ -18,7 +18,7 @@ public class ItemDAOImpl implements ItemDAO {
     }
 
     @Override
-    public boolean update(Item dto) {
+    public boolean update(Item dto, Connection connection) {
         return false;
     }
 
