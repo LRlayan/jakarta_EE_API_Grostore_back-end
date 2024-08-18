@@ -182,7 +182,34 @@ $('#deleteS').on('click',()=>{
         $('#selectItemCode').append($('<option>').text(store[i].itemCode));
     }
 
-    
+    let code = $('#itemCodeR').val();
+
+    let ItemDTO = {
+        itemCode : code
+    }
+
+    const itemDTOJson = JSON.stringify(ItemDTO);
+    console.log("json" + itemDTOJson);
+
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                console.log(jsonTypeResp);
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open("DELETE","http://localhost:8080/groStore_pos_system_back_end_war_exploded/item",true);
+    http.setRequestHeader("Content-Type","application/json");
+    http.send(itemDTOJson);
+
 
     $('#deleteS').prop('disabled' , true);
     loadTable();
