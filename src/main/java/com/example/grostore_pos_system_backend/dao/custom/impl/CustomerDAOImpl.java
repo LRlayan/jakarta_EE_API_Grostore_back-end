@@ -2,7 +2,6 @@ package com.example.grostore_pos_system_backend.dao.custom.impl;
 
 import com.example.grostore_pos_system_backend.dao.SQLUtil;
 import com.example.grostore_pos_system_backend.dao.custom.CustomerDAO;
-import com.example.grostore_pos_system_backend.dto.CustomerDTO;
 import com.example.grostore_pos_system_backend.entity.Customer;
 
 import java.sql.Connection;
@@ -34,8 +33,9 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean update(Customer dto) {
-        return false;
+    public boolean update(Customer dto, Connection connection) throws SQLException {
+        System.out.println(" DAO Update : " + dto.getName() + dto.getCity() + dto.getTel() + dto.getId());
+        return SQLUtil.executeQuery("UPDATE customer SET name = ?, city = ?, tel = ? WHERE id = ?",connection,dto.getName(),dto.getCity(),dto.getTel(),dto.getId());
     }
 
     @Override
