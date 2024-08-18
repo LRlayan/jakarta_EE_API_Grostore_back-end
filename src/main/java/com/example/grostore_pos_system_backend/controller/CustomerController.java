@@ -66,7 +66,6 @@ public class CustomerController extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         CustomerDTO customerDTO = JsonbBuilder.create().fromJson(req.getReader(), CustomerDTO.class);
         try(var writer = resp.getWriter()){
-            System.out.println("controller " + customerDTO.getId() + customerDTO.getName() + customerDTO.getCity() + customerDTO.getTel());
             boolean isUpdated = customerBO.updateCustomer(customerDTO,connection);
             if (isUpdated){
                 writer.write("update successfully");
@@ -80,7 +79,17 @@ public class CustomerController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+        CustomerDTO customerDTO = JsonbBuilder.create().fromJson(req.getReader(), CustomerDTO.class);
+        try(var writer = resp.getWriter()){
+            var isDelete = customerBO.deleteCustomer(customerDTO.getId(), connection);
+            if (isDelete){
+                writer.write("Delete Successfully");
+            }else {
+                writer.write("Please Try again!");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
