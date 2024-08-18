@@ -121,19 +121,6 @@ function loadTable(){
                                 </tr>`;
                     $('#customerTable').append(record);
                 });
-
-
-                
-    // customer.map(function (customerDetails){
-    //     let record = `<tr>
-    //                               <td class="c-id orderTableBody">${customerDetails.id}</td>  
-    //                               <td class="c-name orderTableBody">${customerDetails.name}</td>  
-    //                               <td class="c-city orderTableBody">${customerDetails.city}</td>  
-    //                               <td class="c-tel orderTableBody">${customerDetails.tel}</td>  
-    //                          </tr>`
-
-    //     $('#customerTable').append(record)
-    // });
             } else {
                 console.error("Failed to fetch records");
                 console.error("Status Received", http.status);
@@ -149,22 +136,51 @@ function loadTable(){
 }
 
 $('#updateC').on('click' , ()=>{
-    cId = $('#inputCustomerIdU').val()
-    cName = $('#inputCustomerNameU').val()
-    cCity = $('#inputCityU').val()
-    cTel = $('#inputTelephoneU').val()
+    event.preventDefault();
+    let id = $('#inputCustomerIdU').val();
+    let cName = $('#inputCustomerNameU').val();
+    let city = $('#inputCityU').val();
+    let tel = $('#inputTelephoneU').val();
 
-    let cus = customer[clickTableRow]
-    cus.id = cId
-    cus.name = cName
-    cus.city = cCity
-    cus.tel = cTel
+    const CustomerDTO = {
+        id : id,
+        name : cName,
+        city : city,
+        tel : tel
+    }
+    
+    // let cus = customer[clickTableRow]
+    // cus.id = cId
+    // cus.name = cName
+    // cus.city = cCity
+    // cus.tel = cTel
 
-    $('#updateC').prop('disabled' , true);
+    const customerDTOJson = JSON.stringify(CustomerDTO);
+    console.log("json" + customerDTOJson);
 
-    loadTable()
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                console.log(jsonTypeResp);
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open("PUT","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
+    http.setRequestHeader("Content-Type","application/json");
+    http.send(customerDTOJson);
+
+    // loadTable()
     clearForm()
-})
+    $('#updateC').prop('disabled' , true);
+});
 
 $('#deleteC').on('click',()=>{
     customer.splice(clickTableRow , 1);
@@ -179,7 +195,7 @@ $('#deleteC').on('click',()=>{
 
     loadTable()
     clearForm()
-})
+});
 
 $(document).ready(function(){
     $("#inputSearch").on("keyup", function() {
