@@ -12,8 +12,8 @@ import java.util.List;
 
 public class ItemDAOImpl implements ItemDAO {
     @Override
-    public boolean save(Item dto , Connection connection) {
-        return false;
+    public boolean save(Item dto , Connection connection) throws SQLException {
+        return SQLUtil.executeQuery("INSERT INTO item VALUES(?,?,?,?)",connection,dto.getItemCode(),dto.getItemName(),dto.getQTYOnHand(),dto.getUnitPrice());
     }
 
     @Override
