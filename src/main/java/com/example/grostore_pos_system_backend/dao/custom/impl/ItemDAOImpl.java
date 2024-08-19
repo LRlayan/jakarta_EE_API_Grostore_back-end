@@ -33,12 +33,12 @@ public class ItemDAOImpl implements ItemDAO {
     }
 
     @Override
-    public boolean update(Item dto, Connection connection) {
-        return false;
+    public boolean update(Item dto, Connection connection) throws SQLException {
+        return SQLUtil.executeQuery("UPDATE item SET itemName = ?, QTYOnHand = ?, unitPrice = ? WHERE itemCode = ?",connection,dto.getItemName(),dto.getQTYOnHand(),dto.getUnitPrice(),dto.getItemCode());
     }
 
     @Override
-    public boolean delete(String id,Connection connection) {
-        return false;
+    public boolean delete(String id,Connection connection) throws SQLException {
+        return SQLUtil.executeQuery("DELETE FROM item WHERE itemCode = ?",connection,id);
     }
 }
