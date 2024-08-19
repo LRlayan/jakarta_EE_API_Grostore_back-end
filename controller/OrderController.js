@@ -22,6 +22,9 @@ var checkSDiscount = false;
 var generateOrderId = 1;
 let income = 0;
 
+window.onload = loadID("customer","GET","getData");
+window.onload = loadID("item","GET","");
+
     $('#placeOrder-tab').on('click',()=>{
         checkOrderId = true;
         checkName = true;
@@ -259,12 +262,32 @@ let income = 0;
     
     }
 
-    function loadID(idString){
-        if(idString.equals("customerId")){
-            
-        }else{
-
+    function loadID(mappingType , methodType , getVal){
+        const http = new XMLHttpRequest();
+        http.onreadystatechange =() =>{
+            if (http.readyState == 4) {
+                if (http.status == 200) {  
+                    const jsonDTO = JSON.parse(http.responseText); 
+                    if (getVal === "getData") {
+                        jsonDTO.map(customer =>{
+                            $('#selectCustomerId').append($('<option>').text(`${customer.id}`));
+                        });
+                    }else{
+                        jsonDTO.map(item =>{
+                            $('#selectItemCode').append($('<option>').text(`${item.itemCode}`));
+                        });
+                    } 
+                }else{
+                    console.error("Failed");
+                    console.error("Status Received" , http.status);
+                    console.error("Processing Stage" , http.readyState);
+                }
+            }else{
+                console.log("Processing stage", http.readyState);
+            }
         }
+        http.open(`${methodType}`,`http://localhost:8080/groStore_pos_system_back_end_war_exploded/${mappingType}`,true);
+        http.send(); 
     }
 
     function clear(){
