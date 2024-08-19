@@ -40,29 +40,29 @@ $('#submitC').on('click' , ()=>{
     }
 
     console.log(CustomerDTO);
+    valuesGetOrSendInDatabase(CustomerDTO,"POST");
+    // const customerDTOJson = JSON.stringify(CustomerDTO);
+    // console.log(customerDTOJson);
 
-    const customerDTOJson = JSON.stringify(CustomerDTO);
-    console.log(customerDTOJson);
-
-    const http = new XMLHttpRequest();
-    http.onreadystatechange =() =>{
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                var jsonTypeResp = JSON.stringify(http.responseText);   
-                console.log(jsonTypeResp);
+    // const http = new XMLHttpRequest();
+    // http.onreadystatechange =() =>{
+    //     if (http.readyState == 4) {
+    //         if (http.status == 200) {
+    //             var jsonTypeResp = JSON.stringify(http.responseText);   
+    //             console.log(jsonTypeResp);
                 
-            }else{
-                console.error("Failed");
-                console.error("Status Received" , http.status);
-                console.error("Processing Stage" , http.readyState);
-            }
-        }else{
-            console.log("Processing stage", http.readyState);
-        }
-    }
-    http.open("POST","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
-    http.setRequestHeader("Content-Type","application/json");
-    http.send(customerDTOJson); 
+    //         }else{
+    //             console.error("Failed");
+    //             console.error("Status Received" , http.status);
+    //             console.error("Processing Stage" , http.readyState);
+    //         }
+    //     }else{
+    //         console.log("Processing stage", http.readyState);
+    //     }
+    // }
+    // http.open("POST","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
+    // http.setRequestHeader("Content-Type","application/json");
+    // http.send(customerDTOJson); 
     loadTable();
 
     // let customerDetail = new Customer(cId,cName,city,tel)
@@ -416,4 +416,28 @@ function isDuplicated(id){
         }
     }
     return false;
+}
+
+function valuesGetOrSendInDatabase(CustomerDTO , methodType){
+    
+    const JsonDTO = JSON.stringify(CustomerDTO);
+  
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                console.log(jsonTypeResp); 
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open(`${methodType}`,"http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
+    http.setRequestHeader("Content-Type","application/json");
+    http.send(JsonDTO); 
 }
