@@ -40,9 +40,6 @@ $('#submitStore').on('click' , ()=>{
     console.log(ItemDTO);
     valuesGetOrSendInDatabase(ItemDTO , "POST");
     loadTable();
-
-    $('#selectItemCode').append($('<option>').text(code)); // place order item code comboBox set item code
-
     clearForm();
 })
 
