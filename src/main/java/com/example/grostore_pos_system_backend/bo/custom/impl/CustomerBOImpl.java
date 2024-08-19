@@ -27,7 +27,6 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public boolean updateCustomer(CustomerDTO customerDTO , Connection connection) throws SQLException {
-        System.out.println("CustomerBO " + customerDTO.getId() + customerDTO.getName() + customerDTO.getCity() + customerDTO.getTel());
         return customerDAO.update(new Customer(customerDTO.getId(), customerDTO.getName(),customerDTO.getCity(), customerDTO.getTel()),connection);
     }
 
