@@ -24,8 +24,8 @@ public class ItemDAOImpl implements ItemDAO {
             Item item = new Item(
                     resultSet.getString(1),
                     resultSet.getString(2),
-                    resultSet.getString(3),
-                    resultSet.getString(4)
+                    resultSet.getInt(3),
+                    resultSet.getDouble(4)
             );
             itemList.add(item);
         }
