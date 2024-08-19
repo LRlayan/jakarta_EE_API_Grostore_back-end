@@ -41,28 +41,6 @@ $('#submitC').on('click' , ()=>{
 
     console.log(CustomerDTO);
     valuesGetOrSendInDatabase(CustomerDTO,"POST");
-    // const customerDTOJson = JSON.stringify(CustomerDTO);
-    // console.log(customerDTOJson);
-
-    // const http = new XMLHttpRequest();
-    // http.onreadystatechange =() =>{
-    //     if (http.readyState == 4) {
-    //         if (http.status == 200) {
-    //             var jsonTypeResp = JSON.stringify(http.responseText);   
-    //             console.log(jsonTypeResp);
-                
-    //         }else{
-    //             console.error("Failed");
-    //             console.error("Status Received" , http.status);
-    //             console.error("Processing Stage" , http.readyState);
-    //         }
-    //     }else{
-    //         console.log("Processing stage", http.readyState);
-    //     }
-    // }
-    // http.open("POST","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
-    // http.setRequestHeader("Content-Type","application/json");
-    // http.send(customerDTOJson); 
     loadTable();
 
     // let customerDetail = new Customer(cId,cName,city,tel)
@@ -130,33 +108,7 @@ $('#updateC').on('click' , ()=>{
         tel : tel
     }
     
-    // let cus = customer[clickTableRow]
-    // cus.id = cId
-    // cus.name = cName
-    // cus.city = cCity
-    // cus.tel = cTel
-
-    const customerDTOJson = JSON.stringify(CustomerDTO);
-    console.log("json" + customerDTOJson);
-
-    const http = new XMLHttpRequest();
-    http.onreadystatechange =() =>{
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                var jsonTypeResp = JSON.stringify(http.responseText);   
-                console.log(jsonTypeResp);
-            }else{
-                console.error("Failed");
-                console.error("Status Received" , http.status);
-                console.error("Processing Stage" , http.readyState);
-            }
-        }else{
-            console.log("Processing stage", http.readyState);
-        }
-    }
-    http.open("PUT","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
-    http.setRequestHeader("Content-Type","application/json");
-    http.send(customerDTOJson);
+    valuesGetOrSendInDatabase(CustomerDTO,"PUT");
 
     loadTable()
     clearForm()
@@ -164,34 +116,12 @@ $('#updateC').on('click' , ()=>{
 });
 
 $('#deleteC').on('click',()=>{
-    // customer.splice(clickTableRow , 1);
     let cId = $('#inputCustomerId').val();
 
     let CustomerDTO = {
         id : cId
     }
-
-    const customerDTOJson = JSON.stringify(CustomerDTO);
-    console.log("json" + customerDTOJson);
-
-    const http = new XMLHttpRequest();
-    http.onreadystatechange =() =>{
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                var jsonTypeResp = JSON.stringify(http.responseText);   
-                console.log(jsonTypeResp);
-            }else{
-                console.error("Failed");
-                console.error("Status Received" , http.status);
-                console.error("Processing Stage" , http.readyState);
-            }
-        }else{
-            console.log("Processing stage", http.readyState);
-        }
-    }
-    http.open("DELETE","http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
-    http.setRequestHeader("Content-Type","application/json");
-    http.send(customerDTOJson);
+    valuesGetOrSendInDatabase(CustomerDTO,"DELETE");
 
     $('#selectCustomerId').empty();
 
