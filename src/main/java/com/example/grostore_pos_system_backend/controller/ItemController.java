@@ -15,6 +15,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet(urlPatterns = "/item")
@@ -61,12 +62,32 @@ public class ItemController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
+        ItemDTO itemDTO = JsonbBuilder.create().fromJson(req.getReader(), ItemDTO.class);
+        try(var writer = resp.getWriter()){
+            boolean isUpdated = itemBO.updateItem(itemDTO,connection);
+            if (isUpdated){
+                writer.write("update successfully");
+            }else {
+                writer.write("Please Try Again.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+        ItemDTO itemDTO = JsonbBuilder.create().fromJson(req.getReader(), ItemDTO.class);
+        try(var writer = resp.getWriter()){
+            var isDelete = itemBO.deleteItem(itemDTO.getItemCode(), connection);
+            if (isDelete){
+                writer.write("Delete Successfully");
+            }else {
+                writer.write("Please Try again!");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
