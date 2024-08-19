@@ -57,10 +57,6 @@ $('#submitC').on('click' , ()=>{
      clearForm()
 })
 
-function loadTable(){
-    valuesGetOrSendInDatabase("","GET","getData");
-}
-
 $('#updateC').on('click' , ()=>{
     event.preventDefault();
     let id = $('#inputCustomerIdU').val();
@@ -101,6 +97,53 @@ $('#deleteC').on('click',()=>{
     loadTable()
     clearForm()
 });
+
+function loadTable(){
+    valuesGetOrSendInDatabase("","GET","getData");
+}
+
+function valuesGetOrSendInDatabase(CustomerDTO , methodType , getVal){
+    
+    const JsonDTO = JSON.stringify(CustomerDTO);
+  
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                if (getVal === "getData") {
+                    const customerDetails = JSON.parse(http.responseText);
+
+                    $('#customerTable').empty();                
+                    customerDetails.map(customer => {
+                       let record = `<tr> 
+                                        <td class ="c-id orderTableBody">${customer.id}</td>
+                                        <td class ="c-name orderTableBody">${customer.name}</td>
+                                        <td class ="c-city orderTableBody">${customer.city}</td>
+                                        <td class ="c-tel orderTableBody">${customer.tel}</td>
+                                    </tr>`;
+                        $('#customerTable').append(record);
+                    });  
+                }else{
+                    console.log(jsonTypeResp);
+                } 
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open(`${methodType}`,"http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
+    if (getVal === "getData") {
+        http.send(); 
+    }else{
+        http.setRequestHeader("Content-Type","application/json");
+        http.send(JsonDTO);  
+    }
+}
 
 $('#customerTable').on('click', 'tr', function () {
 
@@ -313,47 +356,4 @@ function isDuplicated(id){
         }
     }
     return false;
-}
-
-function valuesGetOrSendInDatabase(CustomerDTO , methodType , getVal){
-    
-    const JsonDTO = JSON.stringify(CustomerDTO);
-  
-    const http = new XMLHttpRequest();
-    http.onreadystatechange =() =>{
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                var jsonTypeResp = JSON.stringify(http.responseText);   
-                if (getVal === "getData") {
-                    const customerDetails = JSON.parse(http.responseText);
-
-                    $('#customerTable').empty();                
-                    customerDetails.map(customer => {
-                       let record = `<tr> 
-                                        <td class ="c-id orderTableBody">${customer.id}</td>
-                                        <td class ="c-name orderTableBody">${customer.name}</td>
-                                        <td class ="c-city orderTableBody">${customer.city}</td>
-                                        <td class ="c-tel orderTableBody">${customer.tel}</td>
-                                    </tr>`;
-                        $('#customerTable').append(record);
-                    });  
-                }else{
-                    console.log(jsonTypeResp);
-                } 
-            }else{
-                console.error("Failed");
-                console.error("Status Received" , http.status);
-                console.error("Processing Stage" , http.readyState);
-            }
-        }else{
-            console.log("Processing stage", http.readyState);
-        }
-    }
-    http.open(`${methodType}`,"http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
-    if (getVal === "getData") {
-        http.send(); 
-    }else{
-        http.setRequestHeader("Content-Type","application/json");
-        http.send(JsonDTO);  
-    }
 }
