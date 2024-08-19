@@ -47,16 +47,21 @@ window.onload = loadID("item","GET","");
 
 
     $('#selectCustomerId').change(function() {
-        // Get the selected value using val()
         var selectedValue = $(this).val();
 
-        customer.map(function (cus){
-            if (selectedValue === cus.id){
-                $('#cusName').val(cus.name);
-                $('#cusCity').val(cus.city);
-                $('#cusTel').val(cus.tel);
-            }
+        loadID('customer', 'GET', '')
+        .then(jsonDTO => {
+            jsonDTO.forEach(customer => {
+                if (selectedValue === customer.id){
+                    $('#cusName').val(customer.name);
+                    $('#cusCity').val(customer.city);
+                    $('#cusTel').val(customer.tel);
+                }
+            });
         })
+        .catch(error => {
+            console.error(error);
+        });
     });
 
     $('#selectItemCode').change(function() {
@@ -262,32 +267,31 @@ window.onload = loadID("item","GET","");
     
     }
 
-    function loadID(mappingType , methodType , getVal){
-        const http = new XMLHttpRequest();
-        http.onreadystatechange =() =>{
-            if (http.readyState == 4) {
-                if (http.status == 200) {  
-                    const jsonDTO = JSON.parse(http.responseText); 
-                    if (getVal === "getData") {
-                        jsonDTO.map(customer =>{
-                            $('#selectCustomerId').append($('<option>').text(`${customer.id}`));
-                        });
-                    }else{
-                        jsonDTO.map(item =>{
-                            $('#selectItemCode').append($('<option>').text(`${item.itemCode}`));
-                        });
-                    } 
-                }else{
-                    console.error("Failed");
-                    console.error("Status Received" , http.status);
-                    console.error("Processing Stage" , http.readyState);
+    function loadID(mappingType , methodType , getVal) {
+        return new Promise((resolve, reject) => {
+            const http = new XMLHttpRequest();
+            http.onreadystatechange = () => {
+                if (http.readyState == 4) {
+                    if (http.status == 200) {  
+                        const jsonDTO = JSON.parse(http.responseText); 
+                        if (getVal === "getData") {
+                            jsonDTO.map(customer => {
+                                $('#selectCustomerId').append($('<option>').text(`${customer.id}`));
+                            });
+                        } else {
+                            jsonDTO.map(item => {
+                                $('#selectItemCode').append($('<option>').text(`${item.itemCode}`));
+                            });
+                        }
+                        resolve(jsonDTO); // Resolve the promise with jsonDTO
+                    } else {
+                        reject(`Failed with status: ${http.status}`);
+                    }
                 }
-            }else{
-                console.log("Processing stage", http.readyState);
             }
-        }
-        http.open(`${methodType}`,`http://localhost:8080/groStore_pos_system_back_end_war_exploded/${mappingType}`,true);
-        http.send(); 
+            http.open(`${methodType}`, `http://localhost:8080/groStore_pos_system_back_end_war_exploded/${mappingType}`, true);
+            http.send(); 
+        });
     }
 
     function clear(){
