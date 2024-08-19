@@ -38,29 +38,7 @@ $('#submitStore').on('click' , ()=>{
     }
 
     console.log(ItemDTO);
-
-    const itemDTOJson = JSON.stringify(ItemDTO);
-    console.log(itemDTOJson);
-
-    const http = new XMLHttpRequest();
-    http.onreadystatechange =() =>{
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                var jsonTypeResp = JSON.stringify(http.responseText);   
-                console.log(jsonTypeResp);
-                
-            }else{
-                console.error("Failed");
-                console.error("Status Received" , http.status);
-                console.error("Processing Stage" , http.readyState);
-            }
-        }else{
-            console.log("Processing stage", http.readyState);
-        }
-    }
-    http.open("POST","http://localhost:8080/groStore_pos_system_back_end_war_exploded/item",true);
-    http.setRequestHeader("Content-Type","application/json");
-    http.send(itemDTOJson); 
+    valuesGetOrSendInDatabase(ItemDTO , "POST");
     loadTable();
 
     $('#selectItemCode').append($('<option>').text(code)); // place order item code comboBox set item code
@@ -87,40 +65,7 @@ $('#storeTable').on('click', 'tr', function () {
 });
 
 function loadTable(){
-
-    const http = new XMLHttpRequest();
-    http.onreadystatechange = () => {
-        // Check state
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                // Parse JSON response
-                const itemDetails = JSON.parse(http.responseText);
-                console.log(itemDetails);
-
-                // Display records on the front end (Assuming you have a table or a div to display these)
-            
-                $('#storeTable').empty();
-                itemDetails.map(function (storeDetails){
-                    let record = `<tr>
-                                              <td class="s-code orderTableBody">${storeDetails.itemCode}</td>  
-                                              <td class="s-name orderTableBody">${storeDetails.itemName}</td>  
-                                              <td class="s-qty orderTableBody">${storeDetails.QTYOnHand}</td>  
-                                              <td class="s-price orderTableBody">${storeDetails.unitPrice}</td>  
-                                         </tr>`
-                    $('#storeTable').append(record);
-                });
-            } else {
-                console.error("Failed to fetch records");
-                console.error("Status Received", http.status);
-                console.error("Processing Stage", http.readyState);
-            }
-        } else {
-            console.log("Processing stage", http.readyState);
-        }
-    }
-
-    http.open("GET", "http://localhost:8080/groStore_pos_system_back_end_war_exploded/item", true);
-    http.send();
+    valuesGetOrSendInDatabase("","GET","getData");
 }
 
 $('#updateS').on('click' , ()=>{
@@ -130,13 +75,6 @@ $('#updateS').on('click' , ()=>{
     let QTYOnHand = $('#qty').val();
     let unitPrice = $('#priceS').val();
 
-    // let items = store[clickTableRow]
-
-    // items.itemCode = itemCode
-    // items.itemName = itemName
-    // items.QTYOnHand = QTYOnHand
-    // items.unitPrice = unitPrice
-
     let ItemDTO = {
         itemCode : itemCode,
         itemName : itemName,
@@ -144,27 +82,7 @@ $('#updateS').on('click' , ()=>{
         unitPrice : unitPrice
     }
 
-    const itemDTOJson = JSON.stringify(ItemDTO);
-    console.log("json" + itemDTOJson);
-
-    const http = new XMLHttpRequest();
-    http.onreadystatechange =() =>{
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                var jsonTypeResp = JSON.stringify(http.responseText);   
-                console.log(jsonTypeResp);
-            }else{
-                console.error("Failed");
-                console.error("Status Received" , http.status);
-                console.error("Processing Stage" , http.readyState);
-            }
-        }else{
-            console.log("Processing stage", http.readyState);
-        }
-    }
-    http.open("PUT","http://localhost:8080/groStore_pos_system_back_end_war_exploded/item",true);
-    http.setRequestHeader("Content-Type","application/json");
-    http.send(itemDTOJson);
+    valuesGetOrSendInDatabase(ItemDTO , "PUT");
 
     loadTable();
     clearForm();
@@ -174,7 +92,6 @@ $('#updateS').on('click' , ()=>{
 
 $('#deleteS').on('click',()=>{
     event.preventDefault();
-    // store.splice(clickTableRow , 1);
 
     $('#selectItemCode').empty();
 
@@ -188,28 +105,7 @@ $('#deleteS').on('click',()=>{
         itemCode : code
     }
 
-    const itemDTOJson = JSON.stringify(ItemDTO);
-    console.log("json" + itemDTOJson);
-
-    const http = new XMLHttpRequest();
-    http.onreadystatechange =() =>{
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                var jsonTypeResp = JSON.stringify(http.responseText);   
-                console.log(jsonTypeResp);
-            }else{
-                console.error("Failed");
-                console.error("Status Received" , http.status);
-                console.error("Processing Stage" , http.readyState);
-            }
-        }else{
-            console.log("Processing stage", http.readyState);
-        }
-    }
-    http.open("DELETE","http://localhost:8080/groStore_pos_system_back_end_war_exploded/item",true);
-    http.setRequestHeader("Content-Type","application/json");
-    http.send(itemDTOJson);
-
+    valuesGetOrSendInDatabase(ItemDTO , "DELETE");
 
     $('#deleteS').prop('disabled' , true);
     loadTable();
@@ -420,4 +316,49 @@ function isDuplicated(itemCode){
         }
     }
     return false;
+}
+
+function valuesGetOrSendInDatabase(ItemDTO , methodType , getVal){
+    
+    const itemDTOJson = JSON.stringify(ItemDTO);
+    console.log(itemDTOJson);
+
+    const http = new XMLHttpRequest();
+    http.onreadystatechange =() =>{
+        if (http.readyState == 4) {
+            if (http.status == 200) {
+                var jsonTypeResp = JSON.stringify(http.responseText);   
+                
+                if (getVal === "getData") {
+                    const itemDetails = JSON.parse(http.responseText);
+
+                    $('#storeTable').empty();
+                    itemDetails.map(function (storeDetails){
+                        let record = `<tr>
+                                                <td class="s-code orderTableBody">${storeDetails.itemCode}</td>  
+                                                <td class="s-name orderTableBody">${storeDetails.itemName}</td>  
+                                                <td class="s-qty orderTableBody">${storeDetails.QTYOnHand}</td>  
+                                                <td class="s-price orderTableBody">${storeDetails.unitPrice}</td>  
+                                            </tr>`
+                        $('#storeTable').append(record);
+                    });   
+                }else{
+                    console.log(jsonTypeResp);
+                }
+            }else{
+                console.error("Failed");
+                console.error("Status Received" , http.status);
+                console.error("Processing Stage" , http.readyState);
+            }
+        }else{
+            console.log("Processing stage", http.readyState);
+        }
+    }
+    http.open(`${methodType}`,"http://localhost:8080/groStore_pos_system_back_end_war_exploded/item",true);
+    if (getVal === "getData") {
+        http.send(); 
+    }else{
+        http.setRequestHeader("Content-Type","application/json");
+        http.send(itemDTOJson);  
+    }
 }

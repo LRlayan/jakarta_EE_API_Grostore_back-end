@@ -256,6 +256,15 @@ let income = 0;
                                  </tr>`
             $('#viewOrderDetailTable').append(record)
         })
+    
+    }
+
+    function loadID(idString){
+        if(idString.equals("customerId")){
+            
+        }else{
+
+        }
     }
 
     function clear(){

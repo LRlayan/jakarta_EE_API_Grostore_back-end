@@ -58,40 +58,7 @@ $('#submitC').on('click' , ()=>{
 })
 
 function loadTable(){
-
-    const http = new XMLHttpRequest();
-    http.onreadystatechange = () => {
-        // Check state
-        if (http.readyState == 4) {
-            if (http.status == 200) {
-                // Parse JSON response
-                const customerDetails = JSON.parse(http.responseText);
-                console.log(customerDetails);
-
-                // Display records on the front end (Assuming you have a table or a div to display these)
-            
-                $('#customerTable').empty();                
-                customerDetails.map(customer => {
-                   let record = `<tr> 
-                                    <td class ="c-id orderTableBody">${customer.id}</td>
-                                    <td class ="c-name orderTableBody">${customer.name}</td>
-                                    <td class ="c-city orderTableBody">${customer.city}</td>
-                                    <td class ="c-tel orderTableBody">${customer.tel}</td>
-                                </tr>`;
-                    $('#customerTable').append(record);
-                });
-            } else {
-                console.error("Failed to fetch records");
-                console.error("Status Received", http.status);
-                console.error("Processing Stage", http.readyState);
-            }
-        } else {
-            console.log("Processing stage", http.readyState);
-        }
-    }
-
-    http.open("GET", "http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer", true);
-    http.send();
+    valuesGetOrSendInDatabase("","GET","getData");
 }
 
 $('#updateC').on('click' , ()=>{
@@ -348,7 +315,7 @@ function isDuplicated(id){
     return false;
 }
 
-function valuesGetOrSendInDatabase(CustomerDTO , methodType){
+function valuesGetOrSendInDatabase(CustomerDTO , methodType , getVal){
     
     const JsonDTO = JSON.stringify(CustomerDTO);
   
@@ -357,7 +324,22 @@ function valuesGetOrSendInDatabase(CustomerDTO , methodType){
         if (http.readyState == 4) {
             if (http.status == 200) {
                 var jsonTypeResp = JSON.stringify(http.responseText);   
-                console.log(jsonTypeResp); 
+                if (getVal === "getData") {
+                    const customerDetails = JSON.parse(http.responseText);
+
+                    $('#customerTable').empty();                
+                    customerDetails.map(customer => {
+                       let record = `<tr> 
+                                        <td class ="c-id orderTableBody">${customer.id}</td>
+                                        <td class ="c-name orderTableBody">${customer.name}</td>
+                                        <td class ="c-city orderTableBody">${customer.city}</td>
+                                        <td class ="c-tel orderTableBody">${customer.tel}</td>
+                                    </tr>`;
+                        $('#customerTable').append(record);
+                    });  
+                }else{
+                    console.log(jsonTypeResp);
+                } 
             }else{
                 console.error("Failed");
                 console.error("Status Received" , http.status);
@@ -368,6 +350,10 @@ function valuesGetOrSendInDatabase(CustomerDTO , methodType){
         }
     }
     http.open(`${methodType}`,"http://localhost:8080/groStore_pos_system_back_end_war_exploded/customer",true);
-    http.setRequestHeader("Content-Type","application/json");
-    http.send(JsonDTO); 
+    if (getVal === "getData") {
+        http.send(); 
+    }else{
+        http.setRequestHeader("Content-Type","application/json");
+        http.send(JsonDTO);  
+    }
 }
