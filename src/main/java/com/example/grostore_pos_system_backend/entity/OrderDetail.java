@@ -12,10 +12,10 @@ import java.time.LocalDate;
 public class OrderDetail {
     private String orderId;
     private LocalDate date;
-    private String cusId;
-    private String cusName;
-    private String city;
-    private String tel;
+    private String customerId;
+    private String customerName;
+    private String customerCity;
+    private String customerTel;
     private String itemCode;
     private String itemName;
     private String unitPrice;
