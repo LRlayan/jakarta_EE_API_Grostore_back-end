@@ -22,8 +22,8 @@ var checkSDiscount = false;
 var generateOrderId = 1;
 let income = 0;
 
-window.onload = loadID("customer","GET","getData");
-window.onload = loadID("item","GET","");
+window.onload = loadID("customer","GET","getDataCus");
+window.onload = loadID("item","GET","getDataItem");
 
     $('#placeOrder-tab').on('click',()=>{
         checkOrderId = true;
@@ -68,15 +68,20 @@ window.onload = loadID("item","GET","");
         // Get the selected value using val()
         var selectedValue = $(this).val();
 
-        store.map(function (store){
-            if (selectedValue === store.itemCode){
-                $('#itemNameP').val(store.itemName);
-                $('#qtyOnHandP').val(store.QTYOnHand);
-                $('#inputPriceP').val(store.unitPrice);
-                console.log("first" + store.QTYOnHand)
-                unitPrice = store.unitPrice;
-            }
+        loadID('item', 'GET', '')
+        .then(jsonDTO => {
+            jsonDTO.forEach(item => {
+                if (selectedValue === item.itemCode){
+                    $('#itemNameP').val(item.itemName);
+                    $('#qtyOnHandP').val(item.QTYOnHand);
+                    $('#inputPriceP').val(item.unitPrice);
+                    unitPrice = item.unitPrice;
+                }
+            });
         })
+        .catch(error => {
+            console.error(error);
+        });
     });
 
     $('#orderQTYP').on('input', ()=>{
@@ -274,11 +279,11 @@ window.onload = loadID("item","GET","");
                 if (http.readyState == 4) {
                     if (http.status == 200) {  
                         const jsonDTO = JSON.parse(http.responseText); 
-                        if (getVal === "getData") {
+                        if (getVal === "getDataCus") {
                             jsonDTO.map(customer => {
                                 $('#selectCustomerId').append($('<option>').text(`${customer.id}`));
                             });
-                        } else {
+                        } else if(getVal === "getDataItem"){
                             jsonDTO.map(item => {
                                 $('#selectItemCode').append($('<option>').text(`${item.itemCode}`));
                             });
@@ -294,7 +299,7 @@ window.onload = loadID("item","GET","");
         });
     }
 
-    function clear(){
+function clear(){
         $('#cusName').val('');
         $('#cusCity').val('');
         $('#cusTel').val('');
@@ -308,7 +313,7 @@ window.onload = loadID("item","GET","");
 
         $('#itemNameLabel').empty();
         $('#itemPriceListMainDiv').empty();
-    }
+}
 
 function cancel(){
         $('#subTotal').text('0.00');
@@ -328,7 +333,7 @@ function cancel(){
                 setReduceQTY = store[i].QTYOnHand;
             }
         }
-    }
+}
 
 function validation(orderId,today,cName,cCity,cTel,sName,sQTY,sPrice,discount,orderQty,btnId){
     (() => {
