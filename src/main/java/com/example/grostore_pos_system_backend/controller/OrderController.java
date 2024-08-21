@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 
@@ -27,7 +29,7 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getContentType().toLowerCase().contains("application/json") || req.getContentType() == null){
+        if (!req.getContentType().toLowerCase().contains("application/json") || req.getContentType() == null){
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
 
@@ -57,6 +59,12 @@ public class OrderController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        super.init();
+        try{
+            var ctx = new InitialContext();
+            DataSource pool = (DataSource) ctx.lookup("java:comp/env/jdbc/groStorePosSystem");
+            this.connection = pool.getConnection();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
