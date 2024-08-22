@@ -32,4 +32,9 @@ public class OrderBOImpl implements OrderBO {
     public boolean updateOrder(OrderDTO orderDTO, Connection connection) throws SQLException {
         return orderDAO.update(new Order(orderDTO.getOrderID(),orderDTO.getDate(),orderDTO.getCusId(),orderDTO.getDiscountRate(), orderDTO.getDiscount(), orderDTO.getSubTotal(), orderDTO.getBalance()),connection);
     }
+
+    @Override
+    public boolean deleteOrder(String orderID, Connection connection) throws SQLException {
+        return orderDAO.delete(orderID,connection);
+    }
 }
