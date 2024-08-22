@@ -5,7 +5,9 @@ import com.example.grostore_pos_system_backend.dao.custom.OrderDAO;
 import com.example.grostore_pos_system_backend.entity.Order;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAOImpl implements OrderDAO {
@@ -15,8 +17,22 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
-    public List<Order> getAll(Connection connection) {
-        return null;
+    public List<Order> getAll(Connection connection) throws SQLException {
+        ResultSet resultSet = SQLUtil.executeQuery("SELECT * FROM orders",connection);
+        List<Order> orderList = new ArrayList<>();
+        while (resultSet.next()){
+            Order orders = new Order(
+                    resultSet.getString(1),
+                    resultSet.getDate(2).toLocalDate(),
+                    resultSet.getString(3),
+                    resultSet.getDouble(4),
+                    resultSet.getDouble(5),
+                    resultSet.getDouble(6),
+                    resultSet.getDouble(7)
+            );
+            orderList.add(orders);
+        }
+        return orderList;
     }
 
     @Override
