@@ -8,7 +8,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface OrderBO extends SuperBO {
-    boolean saveOrder(OrderDTO orderDTO , Connection connection) throws SQLException;
 
+    boolean saveOrder(OrderDTO orderDTO , Connection connection) throws SQLException;
     List<OrderDTO> getAllOrder(Connection connection) throws SQLException;
+    boolean updateOrder(OrderDTO orderDTO, Connection connection) throws SQLException;
 }
