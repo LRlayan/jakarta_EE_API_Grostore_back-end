@@ -12,4 +12,5 @@ public interface OrderBO extends SuperBO {
     boolean saveOrder(OrderDTO orderDTO , Connection connection) throws SQLException;
     List<OrderDTO> getAllOrder(Connection connection) throws SQLException;
     boolean updateOrder(OrderDTO orderDTO, Connection connection) throws SQLException;
+    boolean deleteOrder(String orderID, Connection connection) throws SQLException;
 }
