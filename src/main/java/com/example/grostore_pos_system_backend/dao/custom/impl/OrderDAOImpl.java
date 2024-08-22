@@ -13,7 +13,7 @@ import java.util.List;
 public class OrderDAOImpl implements OrderDAO {
     @Override
     public boolean save(Order dto , Connection connection) throws SQLException {
-        return SQLUtil.executeQuery("INSERT INTO orders VALUES(?,?,?,?,?,?,?)",connection,dto.getOrderID(),dto.getDate(),dto.getCusId(),dto.getDiscountRate(),dto.getDiscount(),dto.getSubTotal(),dto.getBalance());
+        return SQLUtil.executeQuery("INSERT INTO orders VALUES(?,?,?,?,?,?,?)",connection,dto.getOrderID(),dto.getDate(),dto.getCusId(),dto.getDiscount(),dto.getDiscountRate(),dto.getSubTotal(),dto.getBalance());
     }
 
     @Override
@@ -36,8 +36,8 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
-    public boolean update(Order dto, Connection connection) {
-        return false;
+    public boolean update(Order dto, Connection connection) throws SQLException {
+        return SQLUtil.executeQuery("UPDATE orders SET date = ?, customerId = ?, discount = ? , discountRate = ? , subTotal = ? , balance = ? WHERE id = ?",connection,dto.getDate(),dto.getCusId(),dto.getDiscount(),dto.getDiscountRate(),dto.getSubTotal(),dto.getBalance(),dto.getOrderID());
     }
 
     @Override
