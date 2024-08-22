@@ -15,6 +15,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/order")
 public class OrderController extends HttpServlet {
@@ -24,7 +25,18 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        try(var writer = resp.getWriter()){
+            List<OrderDTO> orderDTOList = orderBO.getAllOrder(connection);
+            if (orderDTOList != null){
+                resp.setContentType("application/json");
+                Jsonb jsonb = JsonbBuilder.create();
+                jsonb.toJson(orderDTOList,resp.getWriter());
+            }else {
+                writer.write("Not Available");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -38,7 +50,7 @@ public class OrderController extends HttpServlet {
         try(var writer = resp.getWriter()){
             boolean isSaved = orderBO.saveOrder(orderDTO , connection);
             if (isSaved){
-                writer.write("saved order");
+                writer.write("Successfully Order");
             }else {
                 writer.write("Please try again");
             }
