@@ -19,11 +19,13 @@ var checkSOrderQTY = false;
 var checkSPrice = false;
 var checkSDiscount = false;
 
-var generateOrderId = 1;
+var generateOrderId = 0;
 let income = 0;
+var dis = 0;
 
-window.onload = loadID("customer","GET","getDataCus");
-window.onload = loadID("item","GET","getDataItem");
+window.onload = valuesGetOrSendInDatabase("customer","GET","getDataCus");
+window.onload = valuesGetOrSendInDatabase("item","GET","getDataItem");
+window.onload = loadTable();
 
     $('#placeOrder-tab').on('click',()=>{
         checkOrderId = true;
@@ -49,7 +51,7 @@ window.onload = loadID("item","GET","getDataItem");
     $('#selectCustomerId').change(function() {
         var selectedValue = $(this).val();
 
-        loadID('customer', 'GET', '')
+        valuesGetOrSendInDatabase('customer', 'GET', '')
         .then(jsonDTO => {
             jsonDTO.forEach(customer => {
                 if (selectedValue === customer.id){
@@ -68,7 +70,7 @@ window.onload = loadID("item","GET","getDataItem");
         // Get the selected value using val()
         var selectedValue = $(this).val();
 
-        loadID('item', 'GET', '')
+        valuesGetOrSendInDatabase('item', 'GET', '')
         .then(jsonDTO => {
             jsonDTO.forEach(item => {
                 if (selectedValue === item.itemCode){
@@ -119,7 +121,6 @@ window.onload = loadID("item","GET","getDataItem");
             subTotal -= parseFloat(newItemPrice.text());
             $('#subTotal').text(subTotal);
 
-            var dis = 0;
             if (subTotal >= 8000){
                 dis = subTotal * discount / 100;
                 $('#discount').text(dis);
@@ -217,6 +218,27 @@ window.onload = loadID("item","GET","getDataItem");
         generateOrderId++;
         $('#orderId').val('O0-' + generateOrderId)
 
+        var orderId = $('#orderId').val();
+        var date = $('#date').val();
+        var customerId = $('#selectCustomerId').val();
+        var discountRate = $('#discountOrder').val();
+        var discount = dis;
+        var subTotal = subTotal;
+        var total = subTotal-dis;
+
+        const OrderDTO = {
+            orderID:"O-08",
+            date:date,
+            cusId:customerId,
+            discountRate:discountRate,
+            discount:discount,
+            subTotal:500,
+            balance:1000
+        }
+
+        console.log(OrderDTO);
+        
+        valuesGetOrSendInDatabase("order","POST","",OrderDTO);
         loadTable()
         clear()
 
@@ -253,31 +275,18 @@ window.onload = loadID("item","GET","getDataItem");
     })
 
     function loadTable() {
-        $('#viewOrderDetailTable').empty()
-        orders.map(function (orderDetails){
-            let record = `<tr>
-                    <th class="o-orderId orderTableBody" scope="row">${orderDetails.orderId}</th>
-                    <th class="o-date orderTableBody">${orderDetails.date}</th>
-                    <td class="o-cusName orderTableBody">${orderDetails.cusName}</td>
-                    <td class="o-city orderTableBody">${orderDetails.cusCity}</td>
-                    <td class="o-tel orderTableBody">${orderDetails.cusTel}</td>
-                    <td class="o-code orderTableBody">${orderDetails.itemCode}</td>  
-                    <td class="o-iName orderTableBody">${orderDetails.itemName}</td>  
-                    <td class="o-qty orderTableBody">${orderDetails.orderQTY}</td>  
-                    <td class="o-dis orderTableBody">${orderDetails.discount}</td>
-                    <td class="o-price orderTableBody">${orderDetails.price}</td>  
-                                 </tr>`
-            $('#viewOrderDetailTable').append(record)
-        })
-    
+        valuesGetOrSendInDatabase("order", "GET","getData");
     }
 
-    function loadID(mappingType , methodType , getVal) {
+    function valuesGetOrSendInDatabase(mappingType , methodType , getVal , dto) {
+        const JsonDTO = JSON.stringify(dto);
+
         return new Promise((resolve, reject) => {
             const http = new XMLHttpRequest();
             http.onreadystatechange = () => {
                 if (http.readyState == 4) {
                     if (http.status == 200) {  
+                        var jsonTypeResp = JSON.stringify(http.responseText);
                         const jsonDTO = JSON.parse(http.responseText); 
                         if (getVal === "getDataCus") {
                             jsonDTO.map(customer => {
@@ -287,15 +296,35 @@ window.onload = loadID("item","GET","getDataItem");
                             jsonDTO.map(item => {
                                 $('#selectItemCode').append($('<option>').text(`${item.itemCode}`));
                             });
+                        }else if(getVal === "getData"){
+                            $('#viewOrderDetailTable').empty()
+                            jsonDTO.map(function (orderDetails){
+                            let record = `<tr>
+                                                <th class="o-orderId orderTableBody" scope="row">${orderDetails.orderID}</th>
+                                                <th class="o-date orderTableBody">${orderDetails.date}</th>
+                                                <td class="o-cusId orderTableBody">${orderDetails.cusId}</td>
+                                                <td class="o-discountRate orderTableBody">${orderDetails.discountRate}</td>
+                                                <td class="o-discount orderTableBody">${orderDetails.discount}</td>
+                                                <td class="o-subTotal orderTableBody">${orderDetails.subTotal}</td>  
+                                                <td class="o-balance orderTableBody">${orderDetails.balance}</td>  
+                                        </tr>`
+                            $('#viewOrderDetailTable').append(record)
+                            });
                         }
                         resolve(jsonDTO); // Resolve the promise with jsonDTO
                     } else {
                         reject(`Failed with status: ${http.status}`);
+                        console.log(jsonTypeResp);
                     }
                 }
             }
             http.open(`${methodType}`, `http://localhost:8080/groStore_pos_system_back_end_war_exploded/${mappingType}`, true);
-            http.send(); 
+            if (getVal === "getData") {
+                http.send(); 
+            }else{
+                http.setRequestHeader("Content-Type","application/json");
+                http.send(JsonDTO);  
+            } 
         });
     }
 
