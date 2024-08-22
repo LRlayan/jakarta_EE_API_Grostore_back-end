@@ -2,6 +2,7 @@ package com.example.grostore_pos_system_backend.controller;
 
 import com.example.grostore_pos_system_backend.bo.BOFactory;
 import com.example.grostore_pos_system_backend.bo.custom.OrderBO;
+import com.example.grostore_pos_system_backend.dto.CustomerDTO;
 import com.example.grostore_pos_system_backend.dto.OrderDTO;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
@@ -76,7 +77,17 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+        OrderDTO orderDTO = JsonbBuilder.create().fromJson(req.getReader(), OrderDTO.class);
+        try(var writer = resp.getWriter()){
+            boolean isDelete = orderBO.deleteOrder(orderDTO.getOrderID(), connection);
+            if (isDelete){
+                writer.write("Delete Successfully");
+            }else {
+                writer.write("Please Try again!");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
