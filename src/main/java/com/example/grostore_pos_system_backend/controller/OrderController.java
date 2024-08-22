@@ -61,7 +61,17 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
+        OrderDTO orderDTO = JsonbBuilder.create().fromJson(req.getReader(), OrderDTO.class);
+        try(var writer = resp.getWriter()){
+            boolean isUpdated = orderBO.updateOrder(orderDTO,connection);
+            if (isUpdated){
+                writer.write("update successfully");
+            }else {
+                writer.write("Please Try Again.");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
