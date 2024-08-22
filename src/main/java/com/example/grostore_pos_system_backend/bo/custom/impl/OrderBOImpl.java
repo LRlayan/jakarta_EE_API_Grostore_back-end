@@ -27,4 +27,9 @@ public class OrderBOImpl implements OrderBO {
         }
         return orderDTOList;
     }
+
+    @Override
+    public boolean updateOrder(OrderDTO orderDTO, Connection connection) throws SQLException {
+        return orderDAO.update(new Order(orderDTO.getOrderID(),orderDTO.getDate(),orderDTO.getCusId(),orderDTO.getDiscountRate(), orderDTO.getDiscount(), orderDTO.getSubTotal(), orderDTO.getBalance()),connection);
+    }
 }
