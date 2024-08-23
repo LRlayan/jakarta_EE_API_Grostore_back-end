@@ -36,6 +36,7 @@ CREATE TABLE orderDetail(
                             customerTel VARCHAR(15) NOT NULL,
                             itemCode VARCHAR(50) NOT NULL,
                             itemName VARCHAR(50) NOT NULL,
+                            orderQTY INT NOT NULL,
                             unitPrice DECIMAL(10,2) NOT NULL,
                             CONSTRAINT FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
                             CONSTRAINT FOREIGN KEY (itemCode) REFERENCES item(itemCode) ON DELETE CASCADE ON UPDATE CASCADE
