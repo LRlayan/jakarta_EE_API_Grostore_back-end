@@ -18,5 +18,6 @@ public class OrderDetail {
     private String customerTel;
     private String itemCode;
     private String itemName;
-    private String unitPrice;
+    private int orderQTY;
+    private double unitPrice;
 }
