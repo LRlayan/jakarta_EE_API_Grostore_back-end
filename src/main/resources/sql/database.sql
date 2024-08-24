@@ -41,3 +41,6 @@ CREATE TABLE orderDetail(
                             CONSTRAINT FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
                             CONSTRAINT FOREIGN KEY (itemCode) REFERENCES item(itemCode) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- delete all record in table
+-- delete from table_name;
