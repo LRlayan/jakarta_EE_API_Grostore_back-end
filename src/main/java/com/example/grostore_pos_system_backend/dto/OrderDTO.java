@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +19,15 @@ public class OrderDTO implements Serializable {
     private double discount;
     private double subTotal;
     private double balance;
+    private List<OrderDetailDTO> orderDetails;
+
+    public OrderDTO(String orderID, LocalDate date, String cusId, double discountRate, double discount, double subTotal, double balance) {
+        this.orderID = orderID;
+        this.date = date;
+        this.cusId = cusId;
+        this.discountRate = discountRate;
+        this.discount = discount;
+        this.subTotal = subTotal;
+        this.balance = balance;
+    }
 }
