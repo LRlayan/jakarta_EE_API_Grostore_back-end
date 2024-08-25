@@ -19,7 +19,7 @@ var checkSOrderQTY = false;
 var checkSPrice = false;
 var checkSDiscount = false;
 
-var generateOrderId = 1;
+var generateOrderId = 0;
 let income = 0;
 var dis = 0;
 
@@ -36,19 +36,40 @@ window.onload = loadTable();
         checkSQTY = true;
         checkSPrice = true;
 
+        if(generateOrderId == 0){
+            $('#orderId').val('O0-1');
+        }
+
+        autoGenerateOrderId();
+
         validation('#orderId','#date','#cusName','#cusCity','#cusTel','#itemNameP','#qtyOnHandP','#inputPriceP','#discountOrder','#orderQTYP','#addToCartBtn');
         store.map(function (store){
             unitPrice = store.unitPrice;
-        })
-    })
-
-    $('#orderId').val('O0-' + generateOrderId)
+        });
+    });
 
     $('#purchaseBtn').prop('disabled', true);
     $('#cancelBtn').prop('disabled', true);
 
-    function generateOrderId(){
-        
+    function autoGenerateOrderId(){
+        generateOrderId = 1;
+        valuesGetOrSendInDatabase('order','GET','')
+            .then(jsonDTO =>{
+                if(generateOrderId > 0){
+                    jsonDTO.forEach(order => {  
+                        let OID = order.orderID;
+                        console.log("getOrderId ", OID);
+
+                        let parts = OID.split("-");
+                        let split = parts[1]; // Gets the part after the hyphen
+                        let convvertToNumberInId = Number(split);
+                        convvertToNumberInId++;
+                        $('#orderId').val("O0-" + convvertToNumberInId++);
+                    });
+                }else{
+                    
+                }
+            });
     }
 
     $('#selectCustomerId').change(function() {
@@ -218,8 +239,7 @@ window.onload = loadTable();
     });
 
     $('#purchaseBtn').on('click',()=>{
-        generateOrderId++;
-        $('#orderId').val('O0-' + generateOrderId)
+        autoGenerateOrderId();
 
         var orderId = $('#orderId').val();
         var date = $('#date').val();
@@ -236,7 +256,7 @@ window.onload = loadTable();
         var total = subTotal-dis;
 
         const OrderDTO = {
-            orderID:"O-03",
+            orderID:orderId,
             date:date,
             cusId:customerId,
             discountRate:discountRate,
@@ -256,7 +276,7 @@ window.onload = loadTable();
                 tel:customerTel,
                 itemCode:itemCode,
                 itemName:itemName,
-                orderQTY:orderQTY,
+                // orderQTY:orderQTY,
                 unitPrice:200
             }
             OrderDTO.orderDetails.push(itemData);
