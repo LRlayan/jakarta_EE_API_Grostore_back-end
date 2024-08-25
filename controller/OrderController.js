@@ -19,7 +19,7 @@ var checkSOrderQTY = false;
 var checkSPrice = false;
 var checkSDiscount = false;
 
-var generateOrderId = 0;
+var generateOrderId = 1;
 let income = 0;
 var dis = 0;
 
@@ -47,6 +47,9 @@ window.onload = loadTable();
     $('#purchaseBtn').prop('disabled', true);
     $('#cancelBtn').prop('disabled', true);
 
+    function generateOrderId(){
+        
+    }
 
     $('#selectCustomerId').change(function() {
         var selectedValue = $(this).val();
@@ -221,20 +224,43 @@ window.onload = loadTable();
         var orderId = $('#orderId').val();
         var date = $('#date').val();
         var customerId = $('#selectCustomerId').val();
+        var customerName = $('#cusName').val();
+        var customerCity = $('#cusCity').val();
+        var customerTel = $('#cusTel').val();
+        var itemCode = $('#selectItemCode').val();
+        var itemName = $('#itemNameP').val();
+        var orderQTY = $('#orderQTYP').val();
         var discountRate = $('#discountOrder').val();
         var discount = dis;
         var subTotal = subTotal;
         var total = subTotal-dis;
 
         const OrderDTO = {
-            orderID:"O-08",
+            orderID:"O-03",
             date:date,
             cusId:customerId,
             discountRate:discountRate,
             discount:discount,
             subTotal:500,
-            balance:1000
+            balance:1000,
+            orderDetails: []
         }
+
+        $('.getVal').each(function(){
+            let itemData = {
+                orderId:OrderDTO.orderID,
+                date:OrderDTO.date,
+                cusId:OrderDTO.cusId,
+                cusName:customerName,
+                city:customerCity,
+                tel:customerTel,
+                itemCode:itemCode,
+                itemName:itemName,
+                orderQTY:orderQTY,
+                unitPrice:200
+            }
+            OrderDTO.orderDetails.push(itemData);
+        });
 
         console.log(OrderDTO);
         
