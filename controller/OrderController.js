@@ -243,7 +243,7 @@ window.onload = loadTable();
         var customerTel = $('#cusTel').val();
         var itemCode = $('#selectItemCode').val();
         var itemName = $('#itemNameP').val();
-        var orderQTY = $('#orderQTYP').val();
+        var orderQty = $('#orderQTYP').val();
         var discountRate = $('#discountOrder').val();
         var discount = dis;
         var subTotal = subTotal;
@@ -271,7 +271,7 @@ window.onload = loadTable();
                 tel:customerTel,
                 itemCode:itemCode,
                 itemName:itemName,
-                // orderQTY:orderQTY,
+                // orderQTY:orderQty,
                 unitPrice:uniPrice
             }
             OrderDTO.orderDetails.push(itemData);
