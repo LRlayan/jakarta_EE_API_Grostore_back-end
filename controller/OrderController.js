@@ -2,8 +2,8 @@ import Order from "../model/Order.js";
 import {orders,store,customer,itemNames} from "../db/DB.js"
 // import { updateStoreQuantities } from "./StoreController";
 
-let unitPrice = 0;
-var subTotal = 0;
+let uniPrice = 0;
+var subTot = 0;
 let discount = 0;
 var setReduceQTY = 0;
 var canselBtnIncrement = 0
@@ -44,7 +44,7 @@ window.onload = loadTable();
 
         validation('#orderId','#date','#cusName','#cusCity','#cusTel','#itemNameP','#qtyOnHandP','#inputPriceP','#discountOrder','#orderQTYP','#addToCartBtn');
         store.map(function (store){
-            unitPrice = store.unitPrice;
+            uniPrice = store.unitPrice;
         });
     });
 
@@ -58,17 +58,13 @@ window.onload = loadTable();
                 if(generateOrderId > 0){
                     jsonDTO.forEach(order => {  
                         let OID = order.orderID;
-                        console.log("getOrderId ", OID);
-
                         let parts = OID.split("-");
                         let split = parts[1]; // Gets the part after the hyphen
                         let convvertToNumberInId = Number(split);
                         convvertToNumberInId++;
                         $('#orderId').val("O0-" + convvertToNumberInId++);
                     });
-                }else{
-                    
-                }
+                }    
             });
     }
 
@@ -101,7 +97,7 @@ window.onload = loadTable();
                     $('#itemNameP').val(item.itemName);
                     $('#qtyOnHandP').val(item.QTYOnHand);
                     $('#inputPriceP').val(item.unitPrice);
-                    unitPrice = item.unitPrice;
+                    uniPrice = item.unitPrice;
                 }
             });
         })
@@ -113,7 +109,7 @@ window.onload = loadTable();
     $('#orderQTYP').on('input', ()=>{
         let selectedValue = $("#orderQTYP").val();
 
-        let total = (selectedValue*unitPrice);
+        let total = (selectedValue*uniPrice);
         $('#inputPriceP').val(total);
     })
 
@@ -129,7 +125,7 @@ window.onload = loadTable();
 
         // Create a new paragraph element with item details
         var itemName = $('<p>').text(inputName).css({marginBottom:'5px' , marginRight:'15px'});
-        var itemUnitPrice = $('<p class="unit-price">').text(' rs : ' + unitPrice + ' x').css({marginBottom:'5px' , marginRight:'5px'});
+        var itemUnitPrice = $('<p class="unit-price">').text(' rs : ' + uniPrice + ' x').css({marginBottom:'5px' , marginRight:'5px'});
         var itemQTY = $('<p class="qty">').text(qty).css({marginBottom:'5px'});
         var newItemPrice = $('<p class="price">').text(inputPrice).css({textAlign:"right" , marginBottom:'5px'});
         var img = $('<img src="../assets/image/remove.png">').click(function (){
@@ -142,17 +138,17 @@ window.onload = loadTable();
             $(this).closest('.item-container').remove();
 
             // Update the subtotal and balance after removing the item
-            subTotal -= parseFloat(newItemPrice.text());
-            $('#subTotal').text(subTotal);
+            subTot -= parseFloat(newItemPrice.text());
+            $('#subTotal').text(subTot);
 
-            if (subTotal >= 8000){
-                dis = subTotal * discount / 100;
+            if (subTot >= 8000){
+                dis = subTot * discount / 100;
                 $('#discount').text(dis);
             } else {
                 $('#discount').text(0);
             }
 
-            $('#balance').text(subTotal - dis);
+            $('#balance').text(subTot - dis);
 
             //When removing items from the cart, the content is increased
              for (let i = 0; i < itemNames.length; i++) {
@@ -185,18 +181,16 @@ window.onload = loadTable();
         $('#orderRemove').append(itemContainer);
 
         var value = parseFloat(newItemPrice.text());
-        subTotal += value;
+        subTot += value;
 
-        $('#subTotal').text(subTotal);
+        $('#subTotal').text(subTot);
 
-        var dis = 0;
-
-        if (subTotal >= 8000){
-            dis = subTotal*discount/100;
+        if (subTot >= 8000){
+            dis = subTot*discount/100;
             $('#discount').text(dis);
         }
 
-        $('#balance').text(subTotal-dis);
+        $('#balance').text(subTot-dis);
 
         if (itemName !== '' && newItemPrice !== ''){
             $('#purchaseBtn').prop('disabled', false);
@@ -253,7 +247,7 @@ window.onload = loadTable();
         var discountRate = $('#discountOrder').val();
         var discount = dis;
         var subTotal = subTotal;
-        var total = subTotal-dis;
+        var total = parseFloat($('#balance').text());
 
         const OrderDTO = {
             orderID:orderId,
@@ -261,12 +255,13 @@ window.onload = loadTable();
             cusId:customerId,
             discountRate:discountRate,
             discount:discount,
-            subTotal:500,
-            balance:1000,
+            subTotal:subTot,
+            balance:total,
             orderDetails: []
         }
 
         $('.getVal').each(function(){
+            
             let itemData = {
                 orderId:OrderDTO.orderID,
                 date:OrderDTO.date,
@@ -277,12 +272,10 @@ window.onload = loadTable();
                 itemCode:itemCode,
                 itemName:itemName,
                 // orderQTY:orderQTY,
-                unitPrice:200
+                unitPrice:uniPrice
             }
             OrderDTO.orderDetails.push(itemData);
         });
-
-        console.log(OrderDTO);
         
         valuesGetOrSendInDatabase("order","POST","",OrderDTO);
         loadTable()
@@ -375,15 +368,15 @@ window.onload = loadTable();
     }
 
 function clear(){
-        $('#cusName').val('');
-        $('#cusCity').val('');
-        $('#cusTel').val('');
+        // $('#cusName').val('');
+        // $('#cusCity').val('');
+        // $('#cusTel').val('');
         $('#balance').text('0.00');
         $('#discount').text('0.00');
-        $('#itemNameP').val('');
-        $('#inputPriceP').val('');
+        // $('#itemNameP').val('');
+        // $('#inputPriceP').val('');
         $('#orderQTYP').val('');
-        $('#qtyOnHandP').val('');
+        // $('#qtyOnHandP').val('');
         $('#subTotal').text('0.00');
 
         $('#itemNameLabel').empty();
