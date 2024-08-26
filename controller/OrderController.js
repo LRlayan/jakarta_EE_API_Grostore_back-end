@@ -115,6 +115,17 @@ window.onload = loadTable();
 
     $('#addToCartBtn').click(function() {
 
+        var orId = $('#orderId').val();
+        var dates = $('#date').val();
+        var customerId = $('#selectCustomerId').val();
+        var customerName = $('#cusName').val();
+        var customerCity = $('#cusCity').val();
+        var customerTel = $('#cusTel').val();
+        var itemCode = $('#selectItemCode').val();
+        var iName = $('#itemNameP').val();
+        var orderQty = $('#orderQTYP').val();
+        var discountRate = $('#discountOrder').val();
+
         var inputName = $('#itemNameP').val();
         var inputPrice = $('#inputPriceP').val();
         var qty = $('#orderQTYP').val();
@@ -164,6 +175,19 @@ window.onload = loadTable();
             }
         });
 
+        let orderData = {
+            orderId:orId,
+            date:dates,
+            cusId:customerId,
+            cusName:customerName,
+            city:customerCity,
+            tel:customerTel,
+            itemCode:itemCode,
+            itemName:iName,
+            orderQTY:orderQty,
+            unitPrice:uniPrice
+        }
+        store.push(orderData);
         itemNames.push(itemName.text());
 
         // Append elements to the container
@@ -238,12 +262,6 @@ window.onload = loadTable();
         var orderId = $('#orderId').val();
         var date = $('#date').val();
         var customerId = $('#selectCustomerId').val();
-        var customerName = $('#cusName').val();
-        var customerCity = $('#cusCity').val();
-        var customerTel = $('#cusTel').val();
-        var itemCode = $('#selectItemCode').val();
-        var itemName = $('#itemNameP').val();
-        var orderQty = $('#orderQTYP').val();
         var discountRate = $('#discountOrder').val();
         var discount = dis;
         var subTotal = subTotal;
@@ -257,25 +275,8 @@ window.onload = loadTable();
             discount:discount,
             subTotal:subTot,
             balance:total,
-            orderDetails: []
+            orderDetails: store
         }
-
-        $('.getVal').each(function(){
-            
-            let itemData = {
-                orderId:OrderDTO.orderID,
-                date:OrderDTO.date,
-                cusId:OrderDTO.cusId,
-                cusName:customerName,
-                city:customerCity,
-                tel:customerTel,
-                itemCode:itemCode,
-                itemName:itemName,
-                // orderQTY:orderQty,
-                unitPrice:uniPrice
-            }
-            OrderDTO.orderDetails.push(itemData);
-        });
         
         valuesGetOrSendInDatabase("order","POST","",OrderDTO);
         loadTable()
