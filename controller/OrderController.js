@@ -141,10 +141,21 @@ window.onload = loadTable();
         var newItemPrice = $('<p class="price">').text(inputPrice).css({textAlign:"right" , marginBottom:'5px'});
         var img = $('<img src="../assets/image/remove.png">').click(function (){
 
-            for (let i = 0; i < orders.length; i++) {
-                orders.shift();
-            }
+            // for (let i = 0; i < orders.length; i++) {
+            //     orders.shift();
+            // }
+            console.log(store);
+            
 
+            for (let i = store.length - 1; i >= 0; i--) {
+                let id = store[i].orderID;
+                let findIndex = store.findIndex(order => order.orderID == id);
+                if (findIndex != -1) {
+                    store.splice(findIndex, 1);
+                }
+            }
+            
+            console.log(store);
             // Remove only the container of the clicked remove button
             $(this).closest('.item-container').remove();
 
