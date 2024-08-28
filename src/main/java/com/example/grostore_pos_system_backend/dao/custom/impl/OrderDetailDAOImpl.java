@@ -11,7 +11,6 @@ import java.util.List;
 public class OrderDetailDAOImpl implements OrderDetailDAO {
     @Override
     public boolean save(OrderDetail dto , Connection connection) throws SQLException {
-        System.out.println("orderDetailDAO : " + dto);
         return SQLUtil.executeQuery("INSERT INTO orderDetail (orderId, date, customerId, customerName, customerCity, customerTel, itemCode, itemName, orderQTY, unitPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",connection,dto.getOrderId(),dto.getDate(),dto.getCustomerId(),dto.getCustomerName(),dto.getCustomerCity(),dto.getCustomerTel(),dto.getItemCode(),dto.getItemName(),dto.getOrderQTY(),dto.getUnitPrice());
     }
 
