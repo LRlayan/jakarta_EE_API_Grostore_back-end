@@ -1,5 +1,5 @@
 import Order from "../model/Order.js";
-import {orders,store,customer,itemNames} from "../db/DB.js"
+import {orders,store,itemQtydetails,itemNames} from "../db/DB.js"
 // import { updateStoreQuantities } from "./StoreController";
 
 let uniPrice = 0;
@@ -7,6 +7,7 @@ var subTot = 0;
 let discount = 0;
 var setReduceQTY = 0;
 var canselBtnIncrement = 0
+let ItemDTO = {};
 
 var checkOrderId = false;
 var checkDate = false;
@@ -131,6 +132,35 @@ window.onload = loadTable();
         var qty = $('#orderQTYP').val();
         discount = $('#discountOrder').val();
 
+        let qtyOnHand = 0;
+        let reduceQty = 0;
+
+        valuesGetOrSendInDatabase('store', 'GET', '')
+        .then(jsonDTO => {
+            jsonDTO.forEach(store => {
+                if(itemCode == store.itemCode){
+                    console.log("equal code");
+                    qtyOnHand = store.QTYOnHand;
+                    reduceQty = qtyOnHand - orderQty;
+                }
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
+        var QTYOnHand = $('#qtyOnHandP').val();
+        var newQTY = QTYOnHand - qty;
+        console.log("new QTY ",newQTY);
+        
+        ItemDTO = {
+            itemCode:itemCode,
+            itemName:iName,
+            QTYOnHand:newQTY,
+            unitPrice:uniPrice
+        }
+
+        itemQtydetails.push(ItemDTO);
+
         // Create a container for each item detail
         var itemContainer = $('<div class="item-container"></div>').css({display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px'});
 
@@ -140,25 +170,11 @@ window.onload = loadTable();
         var itemQTY = $('<p class="qty">').text(qty).css({marginBottom:'5px'});
         var newItemPrice = $('<p class="price">').text(inputPrice).css({textAlign:"right" , marginBottom:'5px'});
         var img = $('<img src="../assets/image/remove.png">').click(function (){
-
-            // for (let i = 0; i < orders.length; i++) {
-            //     orders.shift();
-            // }
-            console.log(store);
-            
-
-            for (let i = store.length - 1; i >= 0; i--) {
-                let id = store[i].orderID;
-                let findIndex = store.findIndex(order => order.orderID == id);
-                if (findIndex != -1) {
-                    store.splice(findIndex, 1);
-                }
-            }
             
             console.log(store);
-            // Remove only the container of the clicked remove button
+            // Remove only the container of the clicked remove icon
             $(this).closest('.item-container').remove();
-
+            
             // Update the subtotal and balance after removing the item
             subTot -= parseFloat(newItemPrice.text());
             $('#subTotal').text(subTot);
@@ -173,11 +189,11 @@ window.onload = loadTable();
             $('#balance').text(subTot - dis);
 
             //When removing items from the cart, the content is increased
-             for (let i = 0; i < itemNames.length; i++) {
-                if (itemName.text() === itemNames[i]) {
-                    $('#qtyOnHandP').val(parseInt($('#qtyOnHandP').val()) + parseInt(itemQTY.text()));
-                }
-            }
+            //  for (let i = 0; i < itemNames.length; i++) {
+            //     if (itemName.text() === itemNames[i]) {
+            //         $('#qtyOnHandP').val(parseInt($('#qtyOnHandP').val()) + parseInt(itemQTY.text()));
+            //     }
+            // }
 
             // Disable buttons if cart is empty
             if ($('.item-container').children().length === 0) {
@@ -269,7 +285,7 @@ window.onload = loadTable();
 
     $('#purchaseBtn').on('click',()=>{
         autoGenerateOrderId();
-
+      
         var orderId = $('#orderId').val();
         var date = $('#date').val();
         var customerId = $('#selectCustomerId').val();
@@ -290,8 +306,9 @@ window.onload = loadTable();
         }
         
         valuesGetOrSendInDatabase("order","POST","",OrderDTO);
-        loadTable()
-        clear()
+        valuesGetOrSendInDatabase("item","PUT","",ItemDTO);
+        loadTable();
+        clear();        
 
         $('#purchaseBtn').prop('disabled', true);
         $('#cancelBtn').prop('disabled', true);
