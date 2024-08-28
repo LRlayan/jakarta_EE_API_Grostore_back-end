@@ -28,9 +28,6 @@ public class OrderBOImpl implements OrderBO {
 
             // Save each order detail
             for (OrderDetailDTO detail : orderDTO.getOrderDetails()) {
-                System.out.println("OrderBO : " + detail.getOrderId() + detail.getDate()+detail.getCusId()+detail.getCusName()+
-                        detail.getCity()+detail.getTel()+detail.getItemCode()+detail.getItemName()+
-                        detail.getOrderQTY()+detail.getUnitPrice());
                 boolean detailSaved = orderDetailDAO.save(new OrderDetail(detail.getOrderId(),detail.getDate(),detail.getCusId(),detail.getCusName(),
                                                           detail.getCity(),detail.getTel(),detail.getItemCode(),detail.getItemName(),
                                                           detail.getOrderQTY(),detail.getUnitPrice()), connection);
