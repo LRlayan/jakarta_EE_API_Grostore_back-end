@@ -132,34 +132,26 @@ window.onload = loadTable();
         var qty = $('#orderQTYP').val();
         discount = $('#discountOrder').val();
 
-        let qtyOnHand = 0;
-        let reduceQty = 0;
-
-        valuesGetOrSendInDatabase('store', 'GET', '')
-        .then(jsonDTO => {
-            jsonDTO.forEach(store => {
-                if(itemCode == store.itemCode){
-                    console.log("equal code");
-                    qtyOnHand = store.QTYOnHand;
-                    reduceQty = qtyOnHand - orderQty;
-                }
-            });
-        })
-        .catch(error => {
-            console.error(error);
-        });
         var QTYOnHand = $('#qtyOnHandP').val();
         var newQTY = QTYOnHand - qty;
-        console.log("new QTY ",newQTY);
+        console.log("new QTY",newQTY);
         
         ItemDTO = {
+            type:"list",
+            updateEachItemQTY:itemQtydetails
+        }
+
+        let data = {
+            type:ItemDTO.type,
             itemCode:itemCode,
             itemName:iName,
             QTYOnHand:newQTY,
             unitPrice:uniPrice
         }
 
-        itemQtydetails.push(ItemDTO);
+        itemQtydetails.push(data);
+        console.log("length : ",ItemDTO.updateEachItemQTY.length);
+        
 
         // Create a container for each item detail
         var itemContainer = $('<div class="item-container"></div>').css({display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px'});
