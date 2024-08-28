@@ -26,7 +26,19 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public boolean updateItem(ItemDTO itemDTO, Connection connection) throws SQLException {
-        return itemDAO.update(new Item(itemDTO.getItemCode(), itemDTO.getItemName(),itemDTO.getQTYOnHand(), itemDTO.getUnitPrice()),connection);
+        System.out.println("call update method");
+        for (ItemDTO items : itemDTO.getUpdateEachItemQTY()) {
+            System.out.println("type " + items.getType());
+            if (items.getType().equals("list")){
+                System.out.println("match list");
+                System.out.println(items.getItemCode() + items.getItemName() + items.getQTYOnHand() + items.getUnitPrice());
+                return itemDAO.update(new Item(items.getItemCode(), items.getItemName(), items.getQTYOnHand(), items.getUnitPrice()),connection);
+            }else {
+                System.out.println("not list");
+                return itemDAO.update(new Item(itemDTO.getItemCode(), itemDTO.getItemName(),itemDTO.getQTYOnHand(), itemDTO.getUnitPrice()),connection);
+            }
+        }
+        return false;
     }
 
     @Override
